@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta charset="UTF-8">
+		
+					
+		<!-- Include Bootstrap 4 CSS -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		
+		<!-- Include Font Awesome 5 -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+		
+		
+		<title>PBS 92 — Challenge Response</title>
+		
+		<!-- styles for clocks -->
+		<style>
+		.ddr-worldclock{
+			font-weight: bold;
+			border-style: solid;
+			border-color: green;
+			background-color: black;
+			color: lightgreen;
+			font-family: monospace;
+		}
+
+		#clock1{
+			display: block;
+			padding: 0.25em;
+			vertical-align: middle;
+			font-size: 50pt;
+			text-align: center;
+			margin-left: 2em;
+			margin-right: 2em;
+			border-width: 3px;
+			border-radius: 30px;
+		}
+		</style>
+
+
+	</head>
+	
+	<body>
+	<!-- The main page body -->
+	<main class="container mb-5">
+		<!-- The Page header (a Jumbotron) -->
+		<header class="container">
+		 	<div class="jumbotron">
+				<h1 class=":block-4">PBS 92 Challenge Response<br><small class="text-muted">A World Clock (part 1)</small></h1>
+
+				<p class="lead">The challenge response for installment 92 of the <a href="https://bartb.ie/pbs" target="_blank" rel="noopener">Programming by Stealth</a> series.</p>
+		</div>
+		</header>
+
+	<!-- user options go here -->
+	<div class="row">
+		<div class="col-2">
+		</div>
+		<fieldset class="col-9 form form-inline mb-5" role="form" aria-labelledby="clock_config_desc">
+			<legend id="clock_config_desc" class="text-center">--- Configure Clock ---</legend>
+						
+			<form action="javascript:void(0);" id="clock_config_fm">
+			
+			<!-- Timezone selection -->
+			<div class="form-group justify-content-start">
+				<label for="tz_sel">Timezone Selection </label>
+				<select class="form-control ml-3 mr-3" id="tz_sel" aria-describedby="tz_sel_desc">
+					<option value="Europe/London" >Europe/London</option>
+					<option value="Europe/Dublin" >Europe/Dublin</option>
+					<option value="America/Argentina/Buenos_Aires" >America/Argentina/Buenos Aires</option>
+					<option value="America/New_York" >America/New York</option>
+					<option value="America/Panama" >America/Panama</option>
+					<option value="America/Chicago" >America/Chicago</option>
+					<option value="America/Los_Angeles" selected>America/Los Angeles</option>
+					<option value="Pacific/Auckland" >Pacific/Auckland</option>
+					<option value="Asia/Tokyo" >Asia/Tokyo</option>
+					<option value="Europe/Rome" >Europe/Rome</option>
+				</select>
+				<small id="tz_sel_desc" class="form-text text-muted">Select the timezone to display.</small>
+			</div>
+
+			<!-- 12/24-hour clock -->
+			<div class="form-group form-check justify-content-start">
+				<input type="checkbox" id="hour_disp_cb" class="form-check-input" value="ok" aria-describedby="hour_disp_cb_desc">
+				<label for="hour_disp_cb" class="form-check-label">24-hour clock display </label>
+				<small id="hour_disp_cb_desc" class="form-text text-muted ml-2">Check box for 24-hour clock display. Otherwise it's a 12-hour clock display</small>
+			</div>
+			
+			<!-- display seconds -->
+			<div class="form-group form-check justify-content-start">
+				<input type="checkbox" id="secs_disp_cb" class="form-check-input" value="ok" aria-describedby="secs_disp_cb_desc">
+				<label for="secs_disp_cb" class="form-check-label">Display seconds </label>
+				<small id="secs_disp_cb_desc" class="form-text text-muted ml-2">Check box to display seconds in the clock.</small>
+			</div>
+
+			<!-- time display dividers -->
+			<div class="form-group form-check justify-content-start">
+				<input type="checkbox" id="divdr_disp_cb" class="form-check-input" value="ok" aria-describedby="dvdr_disp_cb_desc">
+				<label for="dvdr_disp_cb" class="form-check-label">Display pulsing dividers </label>
+				<small id="dvdr_disp_cb_desc" class="form-text text-muted ml-2">Check box to display pulsing dividers between the parts of the time in the clock.</small>
+			</div>
+
+			</form>
+		</fieldset>
+	</div>
+
+	<!-- clock goes here -->
+	<div class="row justify-content-center">
+		<span id="clock1" class=" col col-sm"></span>
+	</div>
+	
+	<!-- put any errors here -->
+	<div id="output_div" class="m-3"></div>
+
+	<!-- revision date container -->
+	<div class="container">
+		<div class="row">	<!-- outer container, row 8> -->
+			<div class="col-12">	<!-- outer container, col 1> -->
+				<aside class="float-right text-muted p-2 mt-5 bg-light border rounded">
+				<p class="p-1 d-inline font-weight-light align-right" style="font-size: 10pt"> Last modified on:</p>
+				<p class="d-inline font-weight-light align-right" style="font-size: 10pt">03/28/2020</p>
+				</aside>
+			</div>		<!-- outer container, end of col> -->
+		</div>		<!-- outer container, end of row 8> -->
+	</div>
+
+	
+	<!-- ******************************************************************* -->
+	<!-- Mustache Templates -->
+	<!-- ******************************************************************* -->
+
+	</main>
+		
+	</body>
+	
+	<!-- Import the is.js micro checking library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/is_js/0.9.0/is.min.js" integrity="sha256-lnJeulOa3e5IO2EzHr8jKJ3CbT80MBwkS5a+n2ooIr4=" crossorigin="anonymous"></script>
+
+	<!-- Include Bootstrap JavaScript from CDNs -->
+	<script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+	<!-- Include Mustache.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js" integrity="sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=" crossorigin="anonymous"></script>
+
+	<!-- Import the moment.js & moment-timezone.js libraries -->
+	<script type="text/javascript" src="lib/moment.js"></script>
+	<script type="text/javascript" src="lib/moment-timezone-with-data.js"></script>
+	<!-- Import the pbs.WorldClock API -->
+	<script type="text/javascript" src="lib/ddr.WorldClock.js"></script>
+
+	<!-- Custom JS Code -->
+	<script type="text/javascript">
+	// ******************************************************
+	// Global variables
+	// ******************************************************
+	const DEFAULT_TZ = 'America/Los_Angeles';
+	const DEFAULT_TF = 12;	// 12-hour clock display is default
+
+	let TZ_selected = "";
+	let hourSelected = DEFAULT_TF;		// true = use 24-hour clock
+	let secDisplay = "FALSE";			// true = display seconds
+	let divDisplay = "FALSE";			// true = show pulsing dividers
+	
+	let clockWidget ={};			// moment.js object
+	let loadComplete = false;		// true = DOM loaded
+	
+	let cw2 = {};
+	
+	// ******************************************************
+	// a jQuery Document Ready Event Handler
+	// ******************************************************
+	$(function(){
+	// constants
+	const ERRMSG = 0;
+
+	const $outputDiv = $('#output_div');	// where to put error/status messages
+	const $CLOCK = $('#clock1');			// clock widget
+	const $TZSEL_SELECT = $('#tz_sel');		// timezone selection
+	const $HOUR_CB = $('#hour_disp_cb');	// select if 24-hour or 12-our clock
+	const $SECS_CB = $('#secs_disp_cb');	// select if seconds displayed
+	const $DIV_CB = $('#divdr_disp_cb');	// select if pulsing dividers displayed
+
+	// ******************************************************
+	// helper functions
+	// ******************************************************
+	// ========================================================
+	// Error Display functions
+	// ========================================================
+	// --------------------------------------
+	// Extract file/URL data from error data -->
+	// IN: error object from catch
+	// OUT: string
+	// --------------------------------------
+	function parseErrorResponse (errObj) {
+		//console.log (`PER: error statusText is ${errObj.statusText}`);
+		//console.log (`PER: error responseText is ${errObj.responseText}`);
+		let s1 = "";
+		let ss1 = [];
+		let ss2 = [];
+		try {
+			s1 = errObj.responseText;
+			ss1 = s1.split("<p>");		// remove first part of error response
+			ss2 = ss1[1].split("</p>");	// remove last part of error response
+		} catch {
+			ss2[0] = errObj.responseText;
+		}
+		console.log (`PER: ${ss2}`);
+		
+		return ss2[0];
+	}
+	
+	// --------------------------------------------
+	// Provide error response & display message -->
+	// IN: error object from catch, operation text to go in error message
+	// OUT: resulting error message
+	// --------------------------------------
+	function processErrorCondition (errD, opText, errSource) {
+		errData = errD;		// put error object in global variable for console access
+		errDetail = "";
+		
+		console.log(`PEC: In catch`);
+		console.log(`PEC: errData: ${errD}, type is ${typeof errD}`);
+
+		// if no responseText
+		if (errD.responseText == undefined) {
+
+			//if no responseText, try statusText, if that's not there, use message object as is
+			if (errD.statusText == undefined) {
+				errDetail = errD;			// use error return as is
+			} else {
+				errDetail = errD.statusText;
+			}
+
+		} else {	// if is a file error
+			errDetail = parseErrorResponse(errD);	// extract file name from error data
+		}
+		console.log(`PEC: Promises rejected: ${errDetail}`);
+
+		displayStatusMessage(errSource, errDetail, opText, ERRMSG);
+		
+		return errDetail;
+	}
+
+	// --------------------------------------
+	// display primary and error messages -->
+	// --------------------------------------
+	function displayStatusMessage(sTxt, eTxt, fType, mType){
+		
+		console.log (`DSM: error is ${eTxt}`);
+		// <!-- primary message Mustache template
+		const priTemplate = "<div class=\"alert alert-primary border border-primary rounded mb-3\"> {{message}} {{> closeBtn}}</div>";
+		// <!-- error message Mustache template partials -->
+		const errTemplate = "<div class=\"alert alert-danger border border-danger rounded mb-3\"> {{message}} {{> closeBtn}}</div>"
+		// <!-- error message Mustache template partials -->
+		const partials = "closeBtn: \'<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\'";
+
+		let ajaxErrMsg = "";
+		let tmplt = 0;
+
+		// remove any existing messages
+		//$outputDiv.empty().text(' ');		// clear out the previous error messages
+
+		if (mType ==ERRMSG) {
+			// if an error message
+			tmplt = errTemplate;
+			ajaxErrMsg = `Error (${fType}): status: (${sTxt}), Error message = ${eTxt}`;
+
+		} else {
+			// if a primary message
+			tmplt = priTemplate;
+			ajaxErrMsg = `Alert (${fType}): status: OK, Message = ${eTxt}`;
+
+		}
+		//window.alert (ajaxErrMsg);
+		//console.log (`DSM ERROR: ${ajaxErrMsg}`);
+		
+		const $alert = $(Mustache.render(tmplt, { message: ajaxErrMsg }, partials));
+		$alert.alert({});
+		console.log ("DSM: append message to output div ");
+		$outputDiv.append($alert);
+
+		return;
+	}
+
+	// ========================================================
+	// Button Click Event Handlers
+	// ========================================================
+	// set handlers for when checkboxes change
+	// new timezone selected
+	$($TZSEL_SELECT).on('input', function(){
+		TZ_selected = $TZSEL_SELECT.val();		// get the tz selected
+		//console.log (`a timezone selected: ${TZ_selected}`);
+		updateClockDisplay ('TZ select');
+	}).trigger('input');
+	
+	// type of hours (24 or 12) changed
+	$($HOUR_CB).on('input', function(){
+		if ($HOUR_CB.prop('checked')) {
+			hoursSelected = 24;
+		} else {
+			hoursSelected = 12;
+		}
+		//console.log (`hours display changed to: ${hoursSelected}`);
+		updateClockDisplay ('Hours select');
+	}).trigger('input');
+	
+	// display of seconds changed
+	$($SECS_CB).on('input', function(){
+		if ($SECS_CB.prop('checked')) {
+			secDisplay = "TRUE";
+		} else {
+			secDisplay = "FALSE";
+		}
+		//console.log (`seconds display changed to: ${secDisplay}`);
+		updateClockDisplay ('Seconds display');
+	}).trigger('input');
+	
+	// pulsing divider on/off changed
+	$($DIV_CB).on('input', function(){		
+		if ($DIV_CB.prop('checked')) {
+			divDisplay = "TRUE";
+		} else {
+			divDisplay = "FALSE";
+		}
+		//console.log (`pulsing dividers display changed to: ${divDisplay}`);
+		updateClockDisplay ('Pulsing dividers');
+	}).trigger('input');
+
+	// --------------------------------------------
+	// Update clock display                     -->
+	// IN: string identifying what changed
+	// OUT: nothing, updated clock display
+	// --------------------------------------------
+	// data-timeformat="12" data-displayseconds="TRUE" data-blink="true"
+	function updateClockDisplay (src) {
+		//console.log (`UCD: update clock display now`);	
+		
+		// only update clock after it loads
+		if (loadComplete) {
+			try {
+				// set timezone
+				clockWidget.timezone(TZ_selected);
+				
+				// set 12/24-hour clock display
+				clockWidget.timeformat(hoursSelected);
+				
+				// set seconds display
+				clockWidget.displayseconds(secDisplay);
+				
+				// set pulsing dividers display
+				clockWidget.blink(divDisplay);
+				
+			} catch (err) {
+				const errDetail = processErrorCondition (err,"updateClockDisplay", src);
+				console.log ('Error while updating clock display');
+			}
+
+		}
+
+	};
+
+	// ******************************************************
+	// Main Document Handler
+	// ******************************************************	
+	console.log ("start DOM");
+	
+	//---------------------------------------------------
+	// Initialization
+	//---------------------------------------------------
+	try {
+		console.log ("make a clock");
+		clockWidget = new ddr.WorldClock($('#clock1'), DEFAULT_TZ, DEFAULT_TF);
+		loadComplete = true;
+		//cw2 = moment.tz(DEFAULT_TZ);
+
+
+	} catch (err) {
+		const errDetail = processErrorCondition (err,"pbs.WorldClock", "JS");
+		console.log ('Error while displaying clock');
+	}
+
+	console.log ("end of DOM load");
+	});
+	
+	</script>
+</html>
