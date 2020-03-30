@@ -67,16 +67,7 @@
 			<div class="form-group justify-content-start">
 				<label for="tz_sel">Timezone Selection </label>
 				<select class="form-control ml-3 mr-3" id="tz_sel" aria-describedby="tz_sel_desc">
-					<option value="Europe/London" >Europe/London</option>
-					<option value="Europe/Dublin" >Europe/Dublin</option>
-					<option value="America/Argentina/Buenos_Aires" >America/Argentina/Buenos Aires</option>
-					<option value="America/New_York" >America/New York</option>
-					<option value="America/Panama" >America/Panama</option>
-					<option value="America/Chicago" >America/Chicago</option>
-					<option value="America/Los_Angeles" selected>America/Los Angeles</option>
-					<option value="Pacific/Auckland" >Pacific/Auckland</option>
-					<option value="Asia/Tokyo" >Asia/Tokyo</option>
-					<option value="Europe/Rome" >Europe/Rome</option>
+					<!-- options added by Mustache -->
 				</select>
 				<small id="tz_sel_desc" class="form-text text-muted">Select the timezone to display.</small>
 			</div>
@@ -131,6 +122,12 @@
 	<!-- ******************************************************************* -->
 	<!-- Mustache Templates -->
 	<!-- ******************************************************************* -->
+	<!-- Currency Table header template for Mustache -->
+	<script type="text/html" id="TimezoneSelectTpl">
+		{{#.}}
+			<option value="{{{momentName}}}" >{{{name}}}</option>
+		{{/.}}
+	</script>
 
 	</main>
 		
@@ -168,9 +165,97 @@
 	
 	let clockWidget ={};			// moment.js object
 	let loadComplete = false;		// true = DOM loaded
+	let sortBy = 1;					// 0 = sort by region & name, 1 = sort by TZ #
 	
 	let cw2 = {};
 	
+	// ========================================================
+	// Timezone data
+	// ========================================================
+	const TIMEZONES = [ // an array of timezone objects that we can display in our clock
+		{
+			name: "Europe/London",
+			momentName: "Europe/London",
+			tzNumber: 0
+		},
+		{
+			name: "Europe/Dublin",
+			momentName: "Europe/Dublin",
+			tzNumber: 0
+		},
+		{
+			name: "Atlantic/South Georgia",
+			momentName: "Atlantic/South_Georgia",
+			tzNumber: -2
+		},
+		{
+			name: "America/Argentina/Buenos Aires",
+			momentName: "America/Argentina/Buenos_Aires",
+			tzNumber: -4
+		},
+		{
+			name: "America/New York",
+			momentName: "America/New_York",
+			tzNumber: -5
+		},
+		{
+			name: "America/Panama",
+			momentName: "America/Panama",
+			tzNumber: -5
+		},
+		{
+			name: "America/Chicago",
+			momentName: "America/Chicago",
+			tzNumber: -6
+		},
+		{
+			name: "America/Los Angeles",
+			momentName: "America/Los_Angeles",
+			tzNumber: -8
+		},
+		{
+			name: "America/Anchorage",
+			momentName: "America/Anchorage",
+			tzNumber: -10
+		},
+		{
+			name: "Pacific/Honolulu",
+			momentName: "Pacific/Honolulu",
+			tzNumber: -11
+		},
+		{
+			name: "Pacific/Auckland",
+			momentName: "Pacific/Auckland",
+			tzNumber: 12
+		},
+		{
+			name: "Asia/Tokyo",
+			momentName: "Asia/Tokyo",
+			tzNumber: 9
+		},
+		{
+			name: "Europe/Moscow",
+			momentName: "Europe/Moscow",
+			tzNumber: 3
+		},
+		{
+			name: "Europe/Rome",
+			momentName: "Europe/Rome",
+			tzNumber: 1
+		},
+		{
+			name: "Africa/Lagos",
+			momentName: "Africa/Lagos",
+			tzNumber: 0
+		},
+		{
+			name: "America/Edmonton",
+			momentName: "America/Edmonton",
+			tzNumber: -7
+		},
+
+	];
+
 	// ******************************************************
 	// a jQuery Document Ready Event Handler
 	// ******************************************************
@@ -188,6 +273,43 @@
 	// ******************************************************
 	// helper functions
 	// ******************************************************
+	// ------------------------------------------------------------
+	// Add timezone selection options from TIMEZONES to display -->
+	// IN: TIMEZONES global variable
+	// OUT: updated display
+	// ------------------------------------------------------------
+	function addTZOptions () {
+
+		// see how to sort array of timezones
+		let sortedTZs = [];
+		if (sortBy == 1) {
+			// sort timezones by visible name
+			sortedTZs = TIMEZONES.sort(function(a, b){
+				if(a.tzNumber > b.tzNumber) return -1;
+				if(b.tzNumber > a.tzNumber) return 1;
+				return 0;
+			});
+
+		} else {	// sort by default: region & name
+			// sort timezones by visible name
+			sortedTZs = TIMEZONES.sort(function(a, b){
+				if(a.name < b.name) return -1;
+				if(b.name < a.name) return 1;
+				return 0;
+			});
+
+		}
+		// create the jQuery widget from the template & timezone array
+		const $tzSelectOptions = $(Mustache.render($('#TimezoneSelectTpl').html(), sortedTZs));
+		
+		// add the new widget to the page
+		$TZSEL_SELECT.append($tzSelectOptions);
+
+		// set the default
+		$TZSEL_SELECT.val(DEFAULT_TZ);
+
+	}
+	
 	// ========================================================
 	// Error Display functions
 	// ========================================================
@@ -340,6 +462,8 @@
 	function updateClockDisplay (src) {
 		//console.log (`UCD: update clock display now`);	
 		
+		$outputDiv.empty().text(' ');		// clear out any previous error messages
+
 		// only update clock after it loads
 		if (loadComplete) {
 			try {
@@ -373,14 +497,14 @@
 	// Initialization
 	//---------------------------------------------------
 	try {
+		addTZOptions();		// add internal DB of timezones to display
+		
 		console.log ("make a clock");
 		clockWidget = new ddr.WorldClock($('#clock1'), DEFAULT_TZ, DEFAULT_TF);
 		loadComplete = true;
-		//cw2 = moment.tz(DEFAULT_TZ);
-
 
 	} catch (err) {
-		const errDetail = processErrorCondition (err,"pbs.WorldClock", "JS");
+		const errDetail = processErrorCondition (err,"ddr.WorldClock", "JS");
 		console.log ('Error while displaying clock');
 	}
 
